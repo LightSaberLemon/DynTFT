@@ -179,7 +179,24 @@ type
 {$ENDIF}
 
 
-//this procedure would normally be a subprocedure of GetSubstringFittingTheEdit, but this is not supported by mikroPascal  
+procedure RestoreFontSettings(APDynTFTEdit: PDynTFTEdit);
+var
+  TextColor: TColor;
+begin
+  if APDynTFTEdit^.BaseProps.Enabled and CENABLED = CENABLED then
+    TextColor := APDynTFTEdit^.Font_Color
+  else
+    TextColor := CL_DynTFTEdit_DisabledFont;
+
+  {$IFDEF DynTFTFontSupport}
+    DynTFT_Set_Font(APDynTFTEdit^.ActiveFont, TextColor, FO_HORIZONTAL);
+  {$ELSE}
+    DynTFT_Set_Font(@TFT_defaultFont, TextColor, FO_HORIZONTAL);
+  {$ENDIF}
+end;
+
+
+//this procedure would normally be a subprocedure of GetSubstringFittingTheEdit, but this is not supported by mikroPascal
 procedure GetEditSubstringAndItsWidth(APDynTFTEdit: PDynTFTEdit; AState: PSearchSubstringState);
 begin
   {$IFDEF IsDesktop}
@@ -194,6 +211,7 @@ begin
       GeneratePasswordAsterisks(Length(AState^.SubString), AState^.SubString);
   {$ENDIF}
 
+  RestoreFontSettings(APDynTFTEdit);
   GetTextWidthAndHeight(AState^.SubString, AState^.TextWidth, AState^.TextHeight);
 end;
 
@@ -329,7 +347,9 @@ begin
 
     if APDynTFTEdit^.PasswordText then
       GeneratePasswordAsterisks(Length(StringBeforeCaret), StringBeforeCaret);
-  {$ENDIF}  
+  {$ENDIF}
+
+  RestoreFontSettings(APDynTFTEdit);
   GetTextWidthAndHeight(StringBeforeCaret, TextWidth, TextHeight);
   Result := TextWidth;
 end;
@@ -392,22 +412,11 @@ end;
 procedure DynTFTDrawEditWithoutCaret(APDynTFTEdit: PDynTFTEdit; FullRedraw: Boolean);
 var
   DisplayableString: TEditTextString;
-  TextColor: TColor;
 begin
   DynTFT_Set_Pen(CL_DynTFTEdit_Border, 1);
   DynTFT_Set_Brush(1, APDynTFTEdit^.Color, 0, 0, 0, 0);
 
-  if APDynTFTEdit^.BaseProps.Enabled and CENABLED = CENABLED then
-    TextColor := APDynTFTEdit^.Font_Color
-  else
-    TextColor := CL_DynTFTEdit_DisabledFont;
-
-  {$IFDEF DynTFTFontSupport}
-    DynTFT_Set_Font(APDynTFTEdit^.ActiveFont, TextColor, FO_HORIZONTAL);
-  {$ELSE}
-    DynTFT_Set_Font(@TFT_defaultFont, TextColor, FO_HORIZONTAL);
-  {$ENDIF}
-
+  RestoreFontSettings(APDynTFTEdit);
   DynTFT_Rectangle(APDynTFTEdit^.BaseProps.Left, APDynTFTEdit^.BaseProps.Top, APDynTFTEdit^.BaseProps.Left + APDynTFTEdit^.BaseProps.Width, APDynTFTEdit^.BaseProps.Top + APDynTFTEdit^.BaseProps.Height);
 
   UpdateEditWithFittingSubstring(APDynTFTEdit, DisplayableString);
