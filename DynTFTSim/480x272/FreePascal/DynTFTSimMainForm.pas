@@ -41,6 +41,9 @@ uses
   Dialogs, ExtCtrls, ComCtrls, StdCtrls;
 
 type
+
+  { TfrmDynTFTSimMain }
+
   TfrmDynTFTSimMain = class(TForm)
     lblAllocatedMemory: TLabel;
     lstLog: TListBox;
@@ -50,7 +53,6 @@ type
     btnDisplayVirtualScreen: TButton;
     prbAllocatedMemory: TProgressBar;
     tmrStartup: TTimer;
-    tmrSimulator: TTimer;
     tmrBlinkCaret: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure lstLogKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -59,12 +61,13 @@ type
     procedure btnStopSimulatorClick(Sender: TObject);
     procedure tmrStartupTimer(Sender: TObject);
     procedure tmrBlinkCaretTimer(Sender: TObject);
-    procedure tmrSimulatorTimer(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     procedure LoadSettingsFromIni;
     procedure SaveSettingsToIni;
+
+    procedure DynTFTUILoop;
   public
     { Public declarations }
   end;
@@ -145,7 +148,7 @@ begin
 end;
 
 
-procedure TfrmDynTFTSimMain.tmrSimulatorTimer(Sender: TObject);
+procedure TfrmDynTFTSimMain.DynTFTUILoop;
 var
   AllocatedMemSize: Integer;
 begin
@@ -188,9 +191,10 @@ end;
 procedure HandleMessageBox(AMessageBox: PDynTFTMessageBox);
 begin
   repeat
+    frmDynTFTSimMain.DynTFTUILoop;
     Application.ProcessMessages;
     Sleep(1);
-  until AMessageBox^.Done or not frmDynTFTSimMain.tmrSimulator.Enabled;
+  until AMessageBox^.Done or not frmDynTFTSimMain.btnSimulate.Enabled;
 end;
 
 
@@ -208,7 +212,6 @@ begin
   btnSimulate.Enabled := False;
   lstLog.Clear;
   MM_Init;
-  tmrSimulator.Enabled := True;
 
   GCanvas.Pen.Color := $0088FF;
   GCanvas.Brush.Color := clSilver;
@@ -235,12 +238,18 @@ begin
       lstLog.Color := $E0E0FF;
     end;
   end;
+
+  repeat
+    DynTFTUILoop;
+    Application.ProcessMessages;
+    Sleep(1);
+  until btnSimulate.Enabled;  //Can be enabled by Stop button or by closing the app.
 end;
 
 
 procedure TfrmDynTFTSimMain.btnStopSimulatorClick(Sender: TObject);
 begin
-  tmrSimulator.Enabled := False;
+  btnSimulate.Enabled := True;
 
   try
     Dispose(DynTFTMessageBoxMainLoopHandler);
@@ -262,7 +271,6 @@ begin
   end;
 
   pnlRunning.Color := clGreen;
-  btnSimulate.Enabled := True;
   tmrBlinkCaret.Enabled := False;
 end;
 

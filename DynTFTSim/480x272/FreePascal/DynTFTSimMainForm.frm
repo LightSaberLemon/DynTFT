@@ -1,7 +1,7 @@
 object frmDynTFTSimMain: TfrmDynTFTSimMain
-  Left = 891
+  Left = 444
   Height = 358
-  Top = 309
+  Top = 242
   Width = 927
   Caption = 'DynTFT Simulator'
   ClientHeight = 358
@@ -10,9 +10,9 @@ object frmDynTFTSimMain: TfrmDynTFTSimMain
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
+  LCLVersion = '8.4'
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '5.9'
   object lblAllocatedMemory: TLabel
     Left = 454
     Height = 13
@@ -32,11 +32,11 @@ object frmDynTFTSimMain: TfrmDynTFTSimMain
     Font.Height = -13
     Font.Name = 'Courier New'
     ItemHeight = 0
-    OnKeyDown = lstLogKeyDown
     ParentShowHint = False
     ParentFont = False
     ShowHint = True
     TabOrder = 0
+    OnKeyDown = lstLogKeyDown
   end
   object pnlRunning: TPanel
     Left = 372
@@ -45,6 +45,7 @@ object frmDynTFTSimMain: TfrmDynTFTSimMain
     Width = 69
     Caption = 'Running'
     Color = clGreen
+    ParentBackground = False
     ParentColor = False
     TabOrder = 1
   end
@@ -57,9 +58,9 @@ object frmDynTFTSimMain: TfrmDynTFTSimMain
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
-    OnClick = btnSimulateClick
     ParentFont = False
     TabOrder = 2
+    OnClick = btnSimulateClick
   end
   object btnStopSimulator: TButton
     Left = 246
@@ -71,9 +72,9 @@ object frmDynTFTSimMain: TfrmDynTFTSimMain
     Font.Height = -13
     Font.Name = 'Tahoma'
     Font.Style = [fsBold]
-    OnClick = btnStopSimulatorClick
     ParentFont = False
     TabOrder = 3
+    OnClick = btnStopSimulatorClick
   end
   object btnDisplayVirtualScreen: TButton
     Left = 8
@@ -81,8 +82,8 @@ object frmDynTFTSimMain: TfrmDynTFTSimMain
     Top = 8
     Width = 137
     Caption = 'Display Virtual Screen'
-    OnClick = btnDisplayVirtualScreenClick
     TabOrder = 4
+    OnClick = btnDisplayVirtualScreenClick
   end
   object prbAllocatedMemory: TProgressBar
     Left = 454
@@ -96,21 +97,14 @@ object frmDynTFTSimMain: TfrmDynTFTSimMain
     Enabled = False
     Interval = 10
     OnTimer = tmrStartupTimer
-    left = 768
-    top = 104
-  end
-  object tmrSimulator: TTimer
-    Enabled = False
-    Interval = 1
-    OnTimer = tmrSimulatorTimer
-    left = 768
-    top = 216
+    Left = 768
+    Top = 104
   end
   object tmrBlinkCaret: TTimer
     Enabled = False
     Interval = 500
     OnTimer = tmrBlinkCaretTimer
-    left = 768
-    top = 160
+    Left = 768
+    Top = 160
   end
 end
